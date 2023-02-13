@@ -1,14 +1,29 @@
 import random
+from datetime import datetime
+from time import sleep
+
 from kivy.app import App
-from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.graphics import (Color, Rectangle, Line, Ellipse)
+from kivy.config import Config
+
+class Setting():
+    weight = 1280
+    height = 920
+    start_elements = 2000
+    size_point = 10
+    elements = []
+
+
+Config.set("graphics", "resizable", 0)
+Config.set("graphics", "width", Setting.weight)
+Config.set("graphics", "height", Setting.height)
 
 
 def create_elements():
     elements = []
-    for i in range(250):
-        elements.append((random.randrange(0, 490, 10), (random.randrange(0, 490, 10))))
+    for i in range(Setting.start_elements):
+        elements.append((random.randrange(0, Setting.weight, Setting.size_point), (random.randrange(0, Setting.height, Setting.size_point))))
     return elements
 
 
@@ -17,46 +32,72 @@ def logic(elements):
     new_elements = []
     for i in range(len(elements)):
         cout = 0
-        if (elements[i][0]+10, elements[i][1]) in elements:
+        if (elements[i][0]+Setting.size_point, elements[i][1]) in elements:
             cout = cout+1
-        if (elements[i][0], elements[i][1]+10) in elements:
+        if (elements[i][0], elements[i][1]+Setting.size_point) in elements:
             cout = cout+1
-        if (elements[i][0]-10, elements[i][1]) in elements:
+        if (elements[i][0]-Setting.size_point, elements[i][1]) in elements:
             cout = cout+1
-        if (elements[i][0], elements[i][1]-10) in elements:
+        if (elements[i][0], elements[i][1]-Setting.size_point) in elements:
             cout = cout+1
-        if (elements[i][0]-10, elements[i][1]-10) in elements:
+        if (elements[i][0]-Setting.size_point, elements[i][1]-Setting.size_point) in elements:
             cout = cout+1
-        if (elements[i][0]+10, elements[i][1]+10) in elements:
+        if (elements[i][0]+Setting.size_point, elements[i][1]+Setting.size_point) in elements:
             cout = cout+1
-        if (elements[i][0]-10, elements[i][1]+10) in elements:
+        if (elements[i][0]-Setting.size_point, elements[i][1]+Setting.size_point) in elements:
             cout = cout+1
-        if (elements[i][0]+10, elements[i][1]-10) in elements:
+        if (elements[i][0]+Setting.size_point, elements[i][1]-Setting.size_point) in elements:
             cout = cout+1
         if cout>3 or cout<2:
             dead_elements.append(elements[i])
+    for h in range(0, Setting.height, Setting.size_point):
+        start_time = datetime.now()
+        for w in range(0, Setting.weight, Setting.size_point):
+            if (w,h) is not elements:
+                cout_2 = 0
+                if (w, h+Setting.size_point) in elements:
+                    cout_2 = cout_2+1
+                if (w, h-Setting.size_point) in elements:
+                    cout_2 = cout_2+1
+                if (w+Setting.size_point, h) in elements:
+                    cout_2 = cout_2+1
+                if (w-Setting.size_point, h) in elements:
+                    cout_2 = cout_2+1
+                if (w+Setting.size_point, h+Setting.size_point) in elements:
+                    cout_2 = cout_2+1
+                if (w-Setting.size_point, h-Setting.size_point) in elements:
+                    cout_2 = cout_2+1
+                if (w+Setting.size_point, h-Setting.size_point) in elements:
+                    cout_2 = cout_2+1
+                if (w-Setting.size_point, h+Setting.size_point) in elements:
+                    cout_2 = cout_2+1
+                if cout_2==3:
+                    new_elements.append((w, h))
+        print(datetime.now() - start_time)
+    for i in range(0, len(new_elements)):
+        elements.append(new_elements[i])
     for elem in dead_elements:
         elements.remove(elem)
+
     return elements
 
 
-
 class Screen(Widget):
-    elements = []
-    if elements == []:
-        elements = create_elements()
+    if Setting.elements == []:
+        Setting.elements = create_elements()
     def on_touch_down(self, touch):
+        print(len(Setting.elements))
         with self.canvas:
             Color(0,1,0,1)
-            for i in range(len(Screen.elements)):
-                Color(0, 1, 0, 1)
-                touch.ud['rectangle'] = Rectangle(pos = (int(Screen.elements[i][0]), int(Screen.elements[i][1])), size = (10,10))
-        print(len(Screen.elements))
-        Screen.elements = logic(Screen.elements)
-
-        print(len(Screen.elements))
-
-
+            if Setting.elements!=[]:
+                self.canvas.clear()
+                for i in range(len(Setting.elements)):
+                    Color(0, 1, 0, 1)
+                    self.canvas.add(Rectangle(pos = (int(Setting.elements[i][0]), int(Setting.elements[i][1])), size = (Setting.size_point,Setting.size_point)))
+            else:
+                print("lose")
+                touch.ud['line'] = Line(pos=(1,1,25,25))
+        Setting.elements = logic(Setting.elements)
 
 
 class LiveApp(App):
@@ -64,11 +105,7 @@ class LiveApp(App):
         parent = Widget()
         self.painter = Screen()
         parent.add_widget(self.painter)
-        parent.add_widget(Button(text = "След. шаг", on_press = self.clear_canvas, pos = (400,400)))
         return parent
-
-    def clear_canvas(self, instance):
-        self.painter.canvas.clear()
 
 
 if __name__ == "__main__":
