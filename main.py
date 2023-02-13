@@ -28,48 +28,51 @@ def create_elements():
 
 
 def logic(elements):
+    size_point = Setting.size_point
+    height = Setting.height
+    weight = Setting.weight
     dead_elements = []
     new_elements = []
     for i in range(len(elements)):
         cout = 0
-        if (elements[i][0]+Setting.size_point, elements[i][1]) in elements:
+        if (elements[i][0]+size_point, elements[i][1]) in elements:
             cout = cout+1
-        if (elements[i][0], elements[i][1]+Setting.size_point) in elements:
+        if (elements[i][0], elements[i][1]+size_point) in elements:
             cout = cout+1
-        if (elements[i][0]-Setting.size_point, elements[i][1]) in elements:
+        if (elements[i][0]-size_point, elements[i][1]) in elements:
             cout = cout+1
-        if (elements[i][0], elements[i][1]-Setting.size_point) in elements:
+        if (elements[i][0], elements[i][1]-size_point) in elements:
             cout = cout+1
-        if (elements[i][0]-Setting.size_point, elements[i][1]-Setting.size_point) in elements:
+        if (elements[i][0]-size_point, elements[i][1]-size_point) in elements:
             cout = cout+1
-        if (elements[i][0]+Setting.size_point, elements[i][1]+Setting.size_point) in elements:
+        if (elements[i][0]+size_point, elements[i][1]+size_point) in elements:
             cout = cout+1
-        if (elements[i][0]-Setting.size_point, elements[i][1]+Setting.size_point) in elements:
+        if (elements[i][0]-size_point, elements[i][1]+size_point) in elements:
             cout = cout+1
-        if (elements[i][0]+Setting.size_point, elements[i][1]-Setting.size_point) in elements:
+        if (elements[i][0]+size_point, elements[i][1]-size_point) in elements:
             cout = cout+1
         if cout>3 or cout<2:
             dead_elements.append(elements[i])
-    for h in range(0, Setting.height, Setting.size_point):
+    for h in range(0, height, size_point):
         start_time = datetime.now()
-        for w in range(0, Setting.weight, Setting.size_point):
+        for w in range(0, weight, size_point):
             if (w,h) is not elements:
                 cout_2 = 0
-                if (w, h+Setting.size_point) in elements:
+                if (w, h+size_point) in elements:
                     cout_2 = cout_2+1
-                if (w, h-Setting.size_point) in elements:
+                if (w, h-size_point) in elements:
                     cout_2 = cout_2+1
-                if (w+Setting.size_point, h) in elements:
+                if (w+size_point, h) in elements:
                     cout_2 = cout_2+1
-                if (w-Setting.size_point, h) in elements:
+                if (w-size_point, h) in elements:
                     cout_2 = cout_2+1
-                if (w+Setting.size_point, h+Setting.size_point) in elements:
+                if (w+size_point, h+size_point) in elements:
                     cout_2 = cout_2+1
-                if (w-Setting.size_point, h-Setting.size_point) in elements:
+                if (w-size_point, h-size_point) in elements:
                     cout_2 = cout_2+1
-                if (w+Setting.size_point, h-Setting.size_point) in elements:
+                if (w+size_point, h-size_point) in elements:
                     cout_2 = cout_2+1
-                if (w-Setting.size_point, h+Setting.size_point) in elements:
+                if (w-size_point, h+size_point) in elements:
                     cout_2 = cout_2+1
                 if cout_2==3:
                     new_elements.append((w, h))
@@ -86,7 +89,6 @@ class Screen(Widget):
     if Setting.elements == []:
         Setting.elements = create_elements()
     def on_touch_down(self, touch):
-        print(len(Setting.elements))
         with self.canvas:
             Color(0,1,0,1)
             if Setting.elements!=[]:
