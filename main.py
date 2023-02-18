@@ -8,9 +8,9 @@ from kivy.graphics import (Color, Rectangle, Line, Ellipse)
 from kivy.config import Config
 
 class Setting():
-    weight = 1280
-    height = 920
-    start_elements = 2000
+    weight = 800
+    height = 600
+    start_elements = 500
     size_point = 10
     elements = []
 
@@ -53,35 +53,42 @@ def logic(elements):
             cout = cout+1
         if cout>3 or cout<2:
             dead_elements.append(elements[i])
+        print(cout)
+    start_time = datetime.now()
     for h in range(0, height, size_point):
-        start_time = datetime.now()
+        elements_zone = []
+        try:
+            for i in range(0, height, size_point):
+                if elements[i][1]==h or elements[i][1]==h-size_point or elements[i][1]==h-size_point:
+                    elements_zone.append(elements[i])
+        except:
+            elements_zone = elements
         for w in range(0, weight, size_point):
             if (w,h) is not elements:
                 cout_2 = 0
-                if (w, h+size_point) in elements:
+                if (w, h+size_point) in elements_zone:
                     cout_2 = cout_2+1
-                if (w, h-size_point) in elements:
+                if (w, h-size_point) in elements_zone:
                     cout_2 = cout_2+1
-                if (w+size_point, h) in elements:
+                if (w+size_point, h) in elements_zone:
                     cout_2 = cout_2+1
-                if (w-size_point, h) in elements:
+                if (w-size_point, h) in elements_zone:
                     cout_2 = cout_2+1
-                if (w+size_point, h+size_point) in elements:
+                if (w+size_point, h+size_point) in elements_zone:
                     cout_2 = cout_2+1
-                if (w-size_point, h-size_point) in elements:
+                if (w-size_point, h-size_point) in elements_zone:
                     cout_2 = cout_2+1
-                if (w+size_point, h-size_point) in elements:
+                if (w+size_point, h-size_point) in elements_zone:
                     cout_2 = cout_2+1
-                if (w-size_point, h+size_point) in elements:
+                if (w-size_point, h+size_point) in elements_zone:
                     cout_2 = cout_2+1
                 if cout_2==3:
                     new_elements.append((w, h))
-        print(datetime.now() - start_time)
     for i in range(0, len(new_elements)):
         elements.append(new_elements[i])
     for elem in dead_elements:
         elements.remove(elem)
-
+    print(datetime.now() - start_time)
     return elements
 
 
